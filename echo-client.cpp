@@ -19,14 +19,14 @@ void handleReceive(int sock)
     std::cout << "Connected to server\n";
     while (true)
     {
-        ssize_t received = recv(sock, buffer, BUFFER_SIZE - 1, 0);
+        ssize_t received = recv(sock, buffer, BUFFER_SIZE - 1, 0); // 소켓으로 값받기
         if (received <= 0)
         {
             printErr("recv");
             break;
         }
-        buffer[received] = '\0';
-        std::cout << buffer << std::flush;
+        buffer[received] = '\0';           // 문자열로 처리위한 널
+        std::cout << buffer << std::flush; // 화면에 출력
     }
     std::cout << "\nConnection closed by server\n";
     close(sock);
@@ -35,7 +35,7 @@ void handleReceive(int sock)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
+    if (argc != 3) // 인자 3개인지 검사
     {
         std::cerr << "Usage: echo-client <server-ip> <port>\n";
         std::cerr << "Example: echo-client 127.0.0.1 9000\n";
@@ -46,16 +46,16 @@ int main(int argc, char *argv[])
     const char *serverPort = argv[2];
 
     struct addrinfo hints = {}, *info;
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_INET;       // ipv4만
+    hints.ai_socktype = SOCK_STREAM; // tcp만만
 
-    if (getaddrinfo(serverIp, serverPort, &hints, &info) != 0)
+    if (getaddrinfo(serverIp, serverPort, &hints, &info) != 0) // ip,port가 실제로 있는지 확인인
     {
         printErr("getaddrinfo");
         return EXIT_FAILURE;
     }
 
-    int clientSocket = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
+    int clientSocket = socket(info->ai_family, info->ai_socktype, info->ai_protocol); // 소켓생성
     if (clientSocket < 0)
     {
         printErr("socket");
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (connect(clientSocket, info->ai_addr, info->ai_addrlen) != 0)
+    if (connect(clientSocket, info->ai_addr, info->ai_addrlen) != 0) // 연결하고 실패하면 if문문
     {
         printErr("connect");
         close(clientSocket);
@@ -71,16 +71,16 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    freeaddrinfo(info);
+    freeaddrinfo(info); // 해제제
 
-    std::thread listenerThread(handleReceive, clientSocket);
+    std::thread listenerThread(handleReceive, clientSocket); // 듣는건 새로운 스레드
     listenerThread.detach();
 
     std::string input;
     while (std::getline(std::cin, input))
     {
         input += '\n';
-        if (send(clientSocket, input.c_str(), input.length(), 0) <= 0)
+        if (send(clientSocket, input.c_str(), input.length(), 0) <= 0) // 입력값보내기기
         {
             printErr("send");
             break;
