@@ -7,12 +7,6 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
-void printUsage()
-{
-    std::cerr << "Usage: echo-client <server-ip> <port>\n";
-    std::cerr << "Example: echo-client 127.0.0.1 9000\n";
-}
-
 void printErr(const std::string &context)
 {
     std::cerr << "[Error] " << context << ": " << std::strerror(errno) << '\n';
@@ -43,7 +37,8 @@ int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
-        printUsage();
+        std::cerr << "Usage: echo-client <server-ip> <port>\n";
+        std::cerr << "Example: echo-client 127.0.0.1 9000\n";
         return EXIT_FAILURE;
     }
 

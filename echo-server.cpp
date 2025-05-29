@@ -23,12 +23,6 @@ void myerror(const char *msg)
     fprintf(stderr, "%s: %s\n", msg, std::strerror(errno));
 }
 
-void usage()
-{
-    printf("syntax: echo-server <port> [-e[-b]]\n");
-    printf("sample: echo-server 1234 -e -b \n");
-}
-
 bool parse(int argc, char *argv[])
 {
     if (argc < 2 || argc > 4)
@@ -119,7 +113,8 @@ int main(int argc, char *argv[])
 {
     if (!parse(argc, argv))
     {
-        usage();
+        printf("syntax: echo-server <port> [-e[-b]]\n");
+        printf("sample: echo-server 1234 -e -b \n");
         return 1;
     }
 
